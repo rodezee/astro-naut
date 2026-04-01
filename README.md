@@ -15,7 +15,7 @@ A super-lightweight, zero-build, reactive in-browser component engine. AstroNaut
 
 ## 📦 Installation
 
-Just add the compiled script to the `<head>` of your website.
+Just add this script to the `<head>` of your website.
 
 ```html
 <script type="module" src="https://esm.sh/gh/rodezee/astro-naut/"></script>
@@ -68,7 +68,8 @@ You can supply custom properties through HTML attributes:
 
 ```html
 <astro-naut 
-  src="./supply-store.astro"
+  id="my-shop"
+  src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/supply-store.astro"
   props='{
     "basePrice": 30,
     "discount": 0.15,
