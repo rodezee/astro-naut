@@ -25,7 +25,7 @@ function compileAstro(source, externalProps = {}, instanceId) {
     const argNames = Object.keys(scope);
     const argValues = Object.values(scope);
 
-    // 1. Extract CSS
+    // Extract CSS
     let css = '';
     const styleRegex = /<style>([\s\S]*?)<\/style>/;
     const styleMatch = template.match(styleRegex);
@@ -33,15 +33,15 @@ function compileAstro(source, externalProps = {}, instanceId) {
       css = styleMatch[1];
       template = template.replace(styleRegex, ''); 
       
-      // --- UPGRADE: Auto-scope the CSS ---
-      // This forces CSS rules to ONLY apply to this specific <astro-naut> component!
-      // Example: .card { ... } becomes [data-astro-id="astro-123"] .card { ... }
+      // Auto-scope standard selectors while ignoring @media and @keyframes
       css = css.replace(/([^\r\n,{}]+)(?=\s*{)/g, (match) => {
-        return `[data-astro-id="${instanceId}"] ${match.trim()}`;
+        const trimmed = match.trim();
+        if (trimmed.startsWith('@')) return match; // Skip @rules
+        return `[data-astro-id="${instanceId}"] ${trimmed}`;
       });
     }
 
-    // Bracket-counting parser (Unchanged)
+    // Bracket-counting parser
     let i = 0;
     while (i < template.length) {
       if (template[i] === '{') {
@@ -59,21 +59,24 @@ function compileAstro(source, externalProps = {}, instanceId) {
             const evaluator = new Function(...argNames, "return " + jsExpression);
             const result = evaluator(...argValues);
             let replacement = '';
+            
             if (Array.isArray(result)) {
               replacement = result.join('');
             } else if (result !== false && result !== null && result !== undefined) {
-              replacement = result;
+              replacement = String(result); // Coerce to string safely
             }
+            
             template = template.substring(0, start) + replacement + template.substring(j);
-            i = start + String(replacement).length;
+            i = start + replacement.length;
             continue; 
-          } catch (e) { }
+          } catch (e) { 
+            // Fallback: It's likely raw CSS or an object literal, leave it as is
+          }
         }
       }
       i++;
     }
 
-    // Return HTML with the scoped style tag
     return `<style>${css}</style>${template}`;
 
   } catch (error) {
@@ -89,6 +92,20 @@ class AstroNaut extends HTMLElement {
     
     // Generate a random unique ID for this specific element instance
     this._instanceId = 'astro-' + Math.random().toString(36).substr(2, 9);
+
+    // --- NEW: EVENT DELEGATION LISTENER ---
+    this.addEventListener('click', (event) => {
+      // Find the closest element that has a data-on-click attribute
+      const target = event.target.closest('[data-on-click]');
+      if (!target) return;
+
+      const methodName = target.getAttribute('data-on-click');
+      
+      // If that method exists on our .props, execute it!
+      if (this._props && typeof this._props[methodName] === 'function') {
+        this._props[methodName].call(this, event);
+      }
+    });
   }
 
   get props() {
@@ -99,14 +116,12 @@ class AstroNaut extends HTMLElement {
     if (typeof value === 'object' && value !== null) {
       this._props = value;
       if (this._rawText) {
-        // Render directly to innerHTML instead of shadowRoot!
         this.innerHTML = compileAstro(this._rawText, this._props, this._instanceId);
       }
     }
   }
 
   async connectedCallback() {
-    // Set the custom data attribute on the element for CSS scoping
     this.setAttribute('data-astro-id', this._instanceId);
 
     const propsAttr = this.getAttribute('props');
@@ -119,18 +134,12 @@ class AstroNaut extends HTMLElement {
       }
     }
 
-    // --- NEW INLINE CHECK INSPIRED BY MDX-GUN ---
-    // 1. First check for an inline script template
     const inlineScript = this.querySelector('script[type="text/astro"]');
     
     if (inlineScript) {
-      // Grab the content directly from the script tag
       this._rawText = inlineScript.innerHTML.trim();
-      
-      // Render it immediately!
       this.innerHTML = compileAstro(this._rawText, this._props, this._instanceId);
     } else {
-      // 2. Second check for a source attribute fallback
       const src = this.getAttribute('src');
       
       if (src) {
