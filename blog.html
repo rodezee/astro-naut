@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <title>My Super Fast Astro Blog</title>
   
-  <script type="module" src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/astro-naut.js"></script>
+  <!-- Optional Style -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/kartoncss/karton.css" type="text/css">
+  
+  <script type="module" src="astro-naut.js"></script>
 </head>
 <body>
 
@@ -12,15 +15,12 @@
 
   <hr>
 
-  <astro-naut src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/supply-store.astro"></astro-naut>
-
-  <hr>
-
   <astro-naut src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/todo-list.astro"></astro-naut>
 
   <hr>
   
-  <astro-naut 
+  <astro-naut
+  id="my-shop"
   src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/supply-store.astro"
   props='{
     "basePrice": 30,
@@ -31,6 +31,22 @@
       { "name": "Aloe Vera", "stock": 15 }
     ]
   }'></astro-naut>
+
+  <script>
+    const shop = document.getElementById('my-shop');
+
+    // Wait for the DOM to be ready, then just pass a standard JS object!
+    setTimeout(() => {
+      shop.props = {
+        basePrice: 15,
+        discount: 0.50, // 50% off sale!
+        items: [
+          { name: "Cactus", stock: 100 },
+          { name: "Fern", stock: 2 }
+        ]
+      };
+    }, 2000); // Changes to plants after 2 seconds!
+  </script>
 
 </body>
 </html>

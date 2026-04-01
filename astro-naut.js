@@ -89,19 +89,38 @@ class AstroNaut extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
+    
+    // Internal storage for our properties
+    this._props = {};
+    this._rawText = ''; 
+  }
+
+  // 1. Getter for .props
+  get props() {
+    return this._props;
+  }
+
+  // 2. Setter for .props (This lets JS do: element.props = { ... })
+  set props(value) {
+    if (typeof value === 'object' && value !== null) {
+      this._props = value;
+      // If we already fetched the template, re-render immediately with the new data!
+      if (this._rawText) {
+        this.shadowRoot.innerHTML = compileAstro(this._rawText, this._props);
+      }
+    }
   }
 
   async connectedCallback() {
     const src = this.getAttribute('src');
     const propsAttr = this.getAttribute('props');
     
-    // --- UPGRADE: Parse the props attribute if it exists ---
-    let parsedProps = {};
-    if (propsAttr) {
+    // Fallback: If the user used the HTML attribute instead of JS property
+    if (propsAttr && Object.keys(this._props).length === 0) {
       try {
-        parsedProps = JSON.parse(propsAttr);
+        this._props = JSON.parse(propsAttr);
       } catch (e) {
-        console.error("Failed to parse props JSON:", e);
+        console.error("Failed to parse props JSON attribute:", e);
       }
     }
 
@@ -115,14 +134,17 @@ class AstroNaut extends HTMLElement {
     try {
       const response = await fetch(src);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-      const rawText = await response.text();
+      
+      // Save the raw text to our instance so we can re-render later if props change
+      this._rawText = await response.text();
 
-      // Pass the parsed props into our updated compiler!
-      this.shadowRoot.innerHTML = compileAstro(rawText, parsedProps);
+      // Initial render
+      this.shadowRoot.innerHTML = compileAstro(this._rawText, this._props);
     } catch (error) {
       this.shadowRoot.innerHTML = `<p style="color:red">Failed to load AstroNaut component: ${error.message}</p>`;
     }
   }
 }
 
+// Register the custom element as <astro-naut>
 customElements.define('astro-naut', AstroNaut);
