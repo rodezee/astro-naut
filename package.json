@@ -1,0 +1,28 @@
+{
+  "name": "astro-naut",
+  "version": "0.1.0",
+  "description": "Browsified dot astro compiler in a webcomponent",
+  "keywords": [
+    "astro",
+    "compiler",
+    "webcomponent"
+  ],
+  "homepage": "https://github.com/rodezee/astro-naut#readme",
+  "bugs": {
+    "url": "https://github.com/rodezee/astro-naut/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rodezee/astro-naut.git"
+  },
+  "license": "MIT",
+  "author": "biensurerodezee@protonmail.com",
+  "type": "commonjs",
+  "main": "astro-naut.js",
+  "scripts": {
+    "test": "true"
+  },
+  "devDependencies": {
+    "live-server": "^1.2.2"
+  }
+}

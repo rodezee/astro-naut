@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Custom Astro-like Compiler</title>
+  <style>
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      margin: 0;
+      background: #0f172a;
+      color: #f8fafc;
+    }
+    header {
+      background: #1e293b;
+      padding: 1rem;
+      text-align: center;
+      border-bottom: 1px solid #334155;
+    }
+    h1 { margin: 0; font-size: 1.5rem; color: #ff5a00; }
+    #container {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+    .panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid #334155;
+    }
+    .panel-header {
+      background: #334155;
+      padding: 0.5rem 1rem;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+    textarea {
+      flex: 1;
+      background: #1e293b;
+      color: #e2e8f0;
+      border: none;
+      padding: 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 1rem;
+      resize: none;
+      outline: none;
+    }
+    iframe {
+      flex: 1;
+      background: white;
+      border: none;
+    }
+    button {
+      background: #ff5a00;
+      color: white;
+      border: none;
+      padding: 15px 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    button:hover { background: #e04f00; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <h1>Build-Your-Own Astro Compiler 🛠️</h1>
+  </header>
+
+  <div id="container">
+    <div class="panel">
+      <div class="panel-header">Your .astro Code</div>
+      <textarea id="editor">---
+const title = "My Custom Compiler";
+const author = "You!";
+const skills = ["No WebAssembly", "Pure JavaScript", "Zero Bloat"];
+---
+<main>
+  <h1>Welcome to {title}!</h1>
+  <p>Built by: <strong>{author}</strong></p>
+  
+  <h3>What features do we have?</h3>
+  <ul>
+    {skills.map(skill => `<li>${skill}</li>`).join('')}
+  </ul>
+</main>
+
+<style>
+  body { font-family: sans-serif; padding: 20px; color: #333; }
+  h1 { color: #ff5a00; }
+  li { color: #0284c7; font-weight: bold; }
+</style></textarea>
+      <button id="compile-btn">Compile & Run 🚀</button>
+    </div>
+
+    <div class="panel" style="border-right: none;">
+      <div class="panel-header">Live Preview</div>
+      <iframe id="preview"></iframe>
+    </div>
+  </div>
+
+  <script type="module" src="./compiler.js"></script>
+</body>
+</html>

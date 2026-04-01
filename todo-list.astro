@@ -1,0 +1,32 @@
+---
+const user = "Astronaut";
+const isLoggedIn = true;
+const tasks = ["Build a compiler", "Test the parser", "Launch to production"];
+const isPremium = false;
+---
+<main>
+  <h1>Welcome back, {user}!</h1>
+  
+  {isLoggedIn && `<p class="status">🟢 You are online and ready to build.</p>`}
+
+  <div class="account-badge">
+    {isPremium 
+      ? `⭐ Premium Member` 
+      : `🛑 Free Tier - <a href="#">Upgrade now!</a>`}
+  </div>
+
+  <h3>Your Todo List:</h3>
+  
+  {tasks.length > 0 
+    ? `<ul>${tasks.map(task => `<li>${task}</li>`).join('')}</ul>`
+    : `<p>No tasks found. Take a break!</p>`
+  }
+</main>
+
+<style>
+  body { font-family: sans-serif; padding: 20px; background: #f8fafc; color: #1e293b; }
+  .status { color: #16a34a; font-weight: bold; }
+  .account-badge { background: #e2e8f0; padding: 8px 12px; border-radius: 6px; display: inline-block; margin-bottom: 15px; }
+  a { color: #2563eb; text-decoration: none; }
+  li { margin-bottom: 5px; color: #0284c7; font-weight: bold; }
+</style>
