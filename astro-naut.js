@@ -1,5 +1,4 @@
-// 1. Put our battle-tested compiler function at the top
-function compileAstro(source) {
+function compileAstro(source, externalProps = {}) {
   try {
     const parts = source.split('---');
     if (parts.length < 3) return "Missing code fences (---)";
@@ -14,10 +13,20 @@ function compileAstro(source) {
       variableNames.push(match[1]);
     }
 
-    const executeCode = new Function(
-      frontmatter + "\nreturn { " + variableNames.join(', ') + " };"
-    );
-    const scope = executeCode();
+    // --- UPGRADE: Pass externalProps into the frontmatter execution ---
+    // This creates a function that accepts 'props' and merges them with internal variables
+    const executeCode = new Function('props', `
+      ${frontmatter}
+      
+      // Override internal variables if they exist in external props
+      const mergedScope = { 
+        ${variableNames.map(v => `${v}: typeof ${v} !== 'undefined' ? ${v} : undefined`).join(',\n')} 
+      };
+      
+      return { ...mergedScope, ...props };
+    `);
+    
+    const scope = executeCode(externalProps);
     const argNames = Object.keys(scope);
     const argValues = Object.values(scope);
 
@@ -69,7 +78,6 @@ function compileAstro(source) {
       i++;
     }
 
-    // Return encapsulated scoped style and HTML
     return `<style>${css}</style>${template}`;
 
   } catch (error) {
@@ -77,17 +85,26 @@ function compileAstro(source) {
   }
 }
 
-// 2. Define the AstroNaut Web Component
 class AstroNaut extends HTMLElement {
   constructor() {
     super();
-    // Attach a Shadow DOM so our AstroNaut component styles don't leak out to the main page!
     this.attachShadow({ mode: 'open' });
   }
 
-  // Watch for when the element is placed on the screen
   async connectedCallback() {
     const src = this.getAttribute('src');
+    const propsAttr = this.getAttribute('props');
+    
+    // --- UPGRADE: Parse the props attribute if it exists ---
+    let parsedProps = {};
+    if (propsAttr) {
+      try {
+        parsedProps = JSON.parse(propsAttr);
+      } catch (e) {
+        console.error("Failed to parse props JSON:", e);
+      }
+    }
+
     if (!src) {
       this.shadowRoot.innerHTML = `<p style="color:red">Missing 'src' attribute.</p>`;
       return;
@@ -96,18 +113,16 @@ class AstroNaut extends HTMLElement {
     this.shadowRoot.innerHTML = `<p style="color:#64748b">Loading component...</p>`;
 
     try {
-      // Fetch the raw .astro file from the CDN or server
       const response = await fetch(src);
       if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
       const rawText = await response.text();
 
-      // Compile and inject it into the component's shadow DOM
-      this.shadowRoot.innerHTML = compileAstro(rawText);
+      // Pass the parsed props into our updated compiler!
+      this.shadowRoot.innerHTML = compileAstro(rawText, parsedProps);
     } catch (error) {
       this.shadowRoot.innerHTML = `<p style="color:red">Failed to load AstroNaut component: ${error.message}</p>`;
     }
   }
 }
 
-// Register the custom element as <astro-naut>
 customElements.define('astro-naut', AstroNaut);

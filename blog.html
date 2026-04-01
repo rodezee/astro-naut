@@ -18,5 +18,19 @@
 
   <astro-naut src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/todo-list.astro"></astro-naut>
 
+  <hr>
+  
+  <astro-naut 
+  src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/supply-store.astro"
+  props='{
+    "basePrice": 30,
+    "discount": 0.15,
+    "items": [
+      { "name": "Swiss Cheese Plant", "stock": 4 },
+      { "name": "Fiddle Leaf Fig", "stock": 0 },
+      { "name": "Aloe Vera", "stock": 15 }
+    ]
+  }'></astro-naut>
+
 </body>
 </html>
