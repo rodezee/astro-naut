@@ -2,107 +2,139 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Custom Astro-like Compiler</title>
-  <style>
-    body {
-      font-family: system-ui, -apple-system, sans-serif;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      margin: 0;
-      background: #0f172a;
-      color: #f8fafc;
-    }
-    header {
-      background: #1e293b;
-      padding: 1rem;
-      text-align: center;
-      border-bottom: 1px solid #334155;
-    }
-    h1 { margin: 0; font-size: 1.5rem; color: #ff5a00; }
-    #container {
-      flex: 1;
-      display: flex;
-      overflow: hidden;
-    }
-    .panel {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      border-right: 1px solid #334155;
-    }
-    .panel-header {
-      background: #334155;
-      padding: 0.5rem 1rem;
-      font-weight: bold;
-      font-size: 0.9rem;
-    }
-    textarea {
-      flex: 1;
-      background: #1e293b;
-      color: #e2e8f0;
-      border: none;
-      padding: 1rem;
-      font-family: 'Courier New', Courier, monospace;
-      font-size: 1rem;
-      resize: none;
-      outline: none;
-    }
-    iframe {
-      flex: 1;
-      background: white;
-      border: none;
-    }
-    button {
-      background: #ff5a00;
-      color: white;
-      border: none;
-      padding: 15px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    button:hover { background: #e04f00; }
-  </style>
+  <title>My Super Fast Astro Blog</title>
+  
+  <!-- Optional Style -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/kartoncss/karton.css" type="text/css">
+  
+  <script type="module" src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/astro-naut.js"></script>
 </head>
 <body>
 
-  <header>
-    <h1>Build-Your-Own Astro Compiler 🛠️</h1>
-  </header>
+  <h1>Live AstroNaut Component CDN Test!</h1>
 
-  <div id="container">
-    <div class="panel">
-      <div class="panel-header">Your .astro Code</div>
-      <textarea id="editor">---
-const title = "My Custom Compiler";
-const author = "You!";
-const skills = ["No WebAssembly", "Pure JavaScript", "Zero Bloat"];
----
-<main>
-  <h1>Welcome to {title}!</h1>
-  <p>Built by: <strong>{author}</strong></p>
+  <hr>
+
+  <astro-naut>
+    <script type="text/astro">
+      ---
+      const title = "Inline AstroNaut is Alive!";
+      const pillColor = "#a855f7"; // Purple
+      ---
+      <div class="banner">
+        <h2>{title}</h2>
+        <p>No external network requests needed for this component! 🚀</p>
+        <span class="pill" style="background: {pillColor}">Fast & Local</span>
+      </div>
+
+      <style>
+        .banner { border: 2px solid #e2e8f0; padding: 20px; border-radius: 12px; }
+        h2 { color: #0f172a; margin-top: 0; }
+        .pill { color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
+      </style>
+    </script>
+  </astro-naut>
+
+  <hr>
+
+  <astro-naut src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/todo-list.astro"></astro-naut>
+
+  <hr>
   
-  <h3>What features do we have?</h3>
-  <ul>
-    {skills.map(skill => `<li>${skill}</li>`).join('')}
-  </ul>
-</main>
+  <astro-naut
+  id="my-shop"
+  src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/supply-store.astro"
+  props='{
+    "basePrice": 30,
+    "discount": 0.15,
+    "items": [
+      { "name": "Swiss Cheese Plant", "stock": 4 },
+      { "name": "Fiddle Leaf Fig", "stock": 0 },
+      { "name": "Aloe Vera", "stock": 15 }
+    ]
+  }'></astro-naut>
 
-<style>
-  body { font-family: sans-serif; padding: 20px; color: #333; }
-  h1 { color: #ff5a00; }
-  li { color: #0284c7; font-weight: bold; }
-</style></textarea>
-      <button id="compile-btn">Compile & Run 🚀</button>
-    </div>
+  <button onclick="overrideShopProps()">Override Shop Properties</button>
 
-    <div class="panel" style="border-right: none;">
-      <div class="panel-header">Live Preview</div>
-      <iframe id="preview"></iframe>
-    </div>
-  </div>
+  <script>
+    // get the my-shop component and just pass a standard JS object!
+    function overrideShopProps() {
+      const shop = document.getElementById('my-shop');
+      shop.props = {
+        basePrice: 15,
+        discount: 0.50, // 50% off sale!
+        items: [
+          { name: "Cactus", stock: 100 },
+          { name: "Fern", stock: 2 }
+        ]
+      };
+    }
+  </script>
 
-  <script type="module" src="./compiler.js"></script>
+  <hr>
+  
+  <astro-naut id="gauntlet-test">
+    <script type="text/astro">
+      ---
+      const baseHue = 200; 
+      const username = "Commander";
+      const inventory = [
+        { item: "Warp Core", rarity: "legendary" },
+        { item: "Space boots", rarity: "common" },
+        { item: "Plasma Shield", rarity: "epic" }
+      ];
+      const notifications = 3;
+      ---
+      <div class="test-wrapper">
+        <h2>Welcome back, {username}!</h2>
+        
+        <p style="color: hsl({baseHue}, 80%, 50%)">
+          Your ship's thruster color is actively linked to this text.
+        </p>
+
+        {notifications > 0 && `
+          <div class="alert">
+            🚨 You have ${notifications} unread transmissions!
+          </div>
+        `}
+
+        <h3>Manifest:</h3>
+        <ul>
+          {inventory.map((inv, index) => `
+            <li style="border-left: 4px solid ${
+              inv.rarity === 'legendary' ? '#f59e0b' : 
+              inv.rarity === 'epic' ? '#a855f7' : '#64748b'
+            }">
+              <strong>${inv.item}</strong> — <span class="badge">${inv.rarity.toUpperCase()}</span>
+            </li>
+          `).join('')}
+        </ul>
+      </div>
+
+      <style>
+        .test-wrapper {
+          background: #0f172a;
+          color: #f8fafc;
+          padding: 25px;
+          border-radius: 16px;
+          box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+        }
+        h2 { color: #38bdf8; margin-top: 0; }
+        .alert { 
+          background: #fecaca;
+          color: #991b1b;
+          padding: 12px; 
+          border-radius: 8px; 
+          border: 2px solid #ef4444;
+          margin-bottom: 15px; 
+          font-weight: bold;
+        }
+        ul { list-style: none; padding: 0; }
+        li { background: #1e293b; padding: 10px; margin-bottom: 8px; border-radius: 4px; display: flex; justify-content: space-between; }
+        .badge { font-size: 0.75rem; font-weight: bold; background: #475569; padding: 2px 6px; border-radius: 4px; }
+      </style>
+    </script>
+  </astro-naut>
+
 </body>
 </html>
