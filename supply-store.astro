@@ -6,10 +6,6 @@ const items = [
   { name: "Moon Boots", stock: 0 },
   { name: "Laser Blaster", stock: 12 }
 ];
-const user = "Astronaut";
-const isLoggedIn = true;
-const tasks = ["Build a compiler", "Test the parser", "Launch to production"];
-const isPremium = false;
 ---
 <main>
   <h2>Space Supply Store</h2>
@@ -29,26 +25,6 @@ const isPremium = false;
       </div>
     `).join('')}
   </div>
-
-  <hr />
-
-  <h1>Welcome back, {user}!</h1>
-  
-  {isLoggedIn && `<p class="status">🟢 You are online and ready to build.</p>`}
-
-  <div class="account-badge">
-    {isPremium 
-      ? `⭐ Premium Member` 
-      : `🛑 Free Tier - <a href="#">Upgrade now!</a>`}
-  </div>
-
-  <h3>Your Todo List:</h3>
-  
-  {tasks.length > 0 
-    ? `<ul>${tasks.map(task => `<li>${task}</li>`).join('')}</ul>`
-    : `<p>No tasks found. Take a break!</p>`
-  }
-</main>
 
 <style>
   body { font-family: sans-serif; padding: 20px; color: #1e293b;}

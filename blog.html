@@ -15,6 +15,28 @@
 
   <hr>
 
+  <astro-naut>
+    <script type="text/astro">
+      ---
+      const title = "Inline AstroNaut is Alive!";
+      const pillColor = "#a855f7"; // Purple
+      ---
+      <div class="banner">
+        <h2>{title}</h2>
+        <p>No external network requests needed for this component! 🚀</p>
+        <span class="pill">Fast & Local</span>
+      </div>
+
+      <style>
+        .banner { border: 2px solid #e2e8f0; padding: 20px; border-radius: 12px; }
+        h2 { color: #0f172a; margin-top: 0; }
+        .pill { background: {pillColor}; color: white; padding: 4px 8px; border-radius: 4px; font-size: 0.8rem; }
+      </style>
+    </script>
+  </astro-naut>
+
+  <hr>
+
   <astro-naut src="https://cdn.jsdelivr.net/gh/rodezee/astro-naut/todo-list.astro"></astro-naut>
 
   <hr>
@@ -31,12 +53,12 @@
       { "name": "Aloe Vera", "stock": 15 }
     ]
   }'></astro-naut>
+  <button onclick="overrideShopProps()">override Shop Properties</button>
 
   <script>
-    const shop = document.getElementById('my-shop');
-
-    // Wait for the DOM to be ready, then just pass a standard JS object!
-    setTimeout(() => {
+    // get the my-shop component and just pass a standard JS object!
+    function overrideShopProps() {
+      const shop = document.getElementById('my-shop');
       shop.props = {
         basePrice: 15,
         discount: 0.50, // 50% off sale!
@@ -45,7 +67,7 @@
           { name: "Fern", stock: 2 }
         ]
       };
-    }, 2000); // Changes to plants after 2 seconds!
+    }
   </script>
 
 </body>
